@@ -47,20 +47,13 @@ def ensure_supported_platform() -> None:
 
 
 def discover_agent_dir() -> Path | None:
-    home = Path(os.getenv("HERMES_HOME", str(Path.home() / ".hermes"))).expanduser()
-    candidates = [
-        os.getenv("HERMES_WEBUI_AGENT_DIR", ""),
-        str(home / "hermes-agent"),
-        str(REPO_ROOT.parent / "hermes-agent"),
-        str(Path.home() / ".hermes" / "hermes-agent"),
-        str(Path.home() / "hermes-agent"),
-    ]
-    for raw in candidates:
-        if not raw:
-            continue
-        candidate = Path(raw).expanduser().resolve()
-        if candidate.exists() and (candidate / "run_agent.py").exists():
-            return candidate
+    """
+    Locate the hermes-agent checkout.
+    Restricted to only look in the sibling directory: ../hermes-agent
+    """
+    path = REPO_ROOT.parent / "hermes-agent"
+    if path.exists() and (path / "run_agent.py").exists():
+        return path.resolve()
     return None
 
 
