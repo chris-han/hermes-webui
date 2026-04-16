@@ -10,6 +10,16 @@ if [[ -f "${REPO_ROOT}/.env" ]]; then
   set +a
 fi
 
+# Stop existing process on port if running
+PORT="${HERMES_WEBUI_PORT:-8787}"
+if command -v fuser >/dev/null 2>&1; then
+  echo "[..] Stopping existing process on port ${PORT}..."
+  fuser -k "${PORT}/tcp" >/dev/null 2>&1 || true
+elif command -v lsof >/dev/null 2>&1; then
+  echo "[..] Stopping existing process on port ${PORT}..."
+  lsof -ti :"${PORT}" | xargs -r kill -9 >/dev/null 2>&1 || true
+fi
+
 PYTHON="${HERMES_WEBUI_PYTHON:-}"
 if [[ -z "${PYTHON}" ]]; then
   if command -v python3 >/dev/null 2>&1; then

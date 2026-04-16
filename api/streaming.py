@@ -921,6 +921,7 @@ def _run_agent_streaming(session_id, msg_text, model, workspace, stream_id, atta
                     or 'unauthorized' in _err_str.lower()
                     or 'invalid api key' in _err_str.lower()
                     or 'invalid_api_key' in _err_str.lower()
+                    or 'no cookie auth credentials' in _err_str.lower()
                 )
                 if _is_auth:
                     put('apperror', {
